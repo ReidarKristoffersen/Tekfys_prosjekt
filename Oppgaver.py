@@ -97,21 +97,66 @@ print(a, b, V_c)
 
 
 
-
-
-
 def ex_eq(c):
+    """
+    Eksempel ligningen vi vil løse, for å teste implimentering av Newtons metode
+
+    Parameters
+    ----------
+    c : float
+        Variabel
+
+    Returns
+    -------
+        float
+        Funksjonsverdi i gitt c-verdi
+
+    """
     return (np.sinh(2*c/T_c))**2-1
 
 def d_ex_eq(c):
+    """
+    Den deriverte av eksempel ligningen vi vil løse, for å teste implimentering av Newtons metode
+
+    Parameters
+    ----------
+    c : float
+        Variabel
+
+    Returns
+    -------
+        float
+        derivert funksjonsverdi i gitt c-verdi
+
+    """
     return 2*np.sinh(4*c/T_c)/T_c
 
 
 def newton_one_var(f, df, c_0, tol):
+    """
+    Gjennomfører newton's metode på funksjonen tatt inn som paramter. Returnerer alle x_i i en følge
+
+    Parameters
+    ----------
+    f : Function
+        Ligning som det tilnærmes en løsning av
+    df : Function
+        Deriverte av f
+    c_0 : float
+        Startverdi for f
+    tol : TYPE
+        Toleranse for løsning
+
+    Returns
+    -------
+    x : array
+        Liste med alle x_i regnet, hvor siste vil være den endelige løsningen innnenfor toleransen.
+
+    """
     max_it =100000
     i = 0
     x = np.array([c_0])
-    while(np.abs(f(c_0))>=tol):
+    while(np.abs(f(x[-1]))>=tol):
         x_i = x[-1] - (f(x[-1])/df(x[-1]))
         x = np.append(x, x_i)
         i+=1
@@ -120,5 +165,15 @@ def newton_one_var(f, df, c_0, tol):
     print(f"The root was found to be at {x[-1]} after {i} iterations")
     return x
 
-c_0 = 1
-c_arr = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-2)
+'''c_0 = 1 #Starter med c = 1 som gitt i oppgavetekst
+c_arr = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
+print(c_arr[-1])
+
+c_0 = 300 #Vet nå at løsningen er ca. 285. Sjekker hvor fortere metoden konverger hvis vi velger c_0 = 300
+c_arr = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
+
+
+print(T_c-2*c_arr[-1]/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten'''
+
+
+
