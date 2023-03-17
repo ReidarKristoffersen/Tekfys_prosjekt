@@ -165,15 +165,21 @@ def newton_one_var(f, df, c_0, tol):
     print(f"The root was found to be at {x[-1]} after {i} iterations")
     return x
 
-'''c_0 = 1 #Starter med c = 1 som gitt i oppgavetekst
+c_0 = 1 #Starter med c = 1 som gitt i oppgavetekst
 c_arr = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
-print(c_arr[-1])
+r = c_arr[-1]
+print(r)
+
 
 c_0 = 300 #Vet nå at løsningen er ca. 285. Sjekker hvor fortere metoden konverger hvis vi velger c_0 = 300
-c_arr = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
+c_arr_300 = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
+print(T_c-2*r/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten
 
 
-print(T_c-2*c_arr[-1]/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten'''
-
-
-
+e_i = np.abs(c_arr-r) #definer array med feil foor hver iterasjon
+p_i = np.log(e_i[3:]/e_i[2:-1])/np.log(e_i[2:-1]/e_i[1:-2]) #Tar ikke med første element ettersom vi her fikk en rar verdi i plottet?????
+plt.plot(p_i)
+plt.title("$p_i$, konvergerer mot q")
+plt.xlabel("i")
+plt.ylabel("$p_i$")
+plt.show()
