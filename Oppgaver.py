@@ -96,6 +96,7 @@ print(a, b, V_c)
 
 
 
+#1c)
 
 def ex_eq(c):
     """
@@ -176,10 +177,16 @@ c_arr_300 = newton_one_var(ex_eq, d_ex_eq, c_0, 10e-12)
 print(T_c-2*r/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten
 
 
+#1d)
+
 e_i = np.abs(c_arr-r) #definer array med feil foor hver iterasjon
+plt.plot(e_i[1:])
+plt.show()
 p_i = np.log(e_i[3:]/e_i[2:-1])/np.log(e_i[2:-1]/e_i[1:-2]) #Tar ikke med første element ettersom vi her fikk en rar verdi i plottet?????
 plt.plot(p_i)
 plt.title("$p_i$, konvergerer mot q")
 plt.xlabel("i")
 plt.ylabel("$p_i$")
 plt.show()
+
+#Ser at p_i konvergerer mot 2. Dette er q-verdien samsvarer med at Newtons metode konvergerer kvadratisk
