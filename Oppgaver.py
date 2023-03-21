@@ -26,7 +26,6 @@ print(a, b, V_c)
 
 # OPPGAVE 1b)
 
-<<<<<<< Updated upstream
 V_val = np.linspace(75, 300, 1000)     #[mL]
 vdW_tilst_likn = ((R * T_c) * 10 / (V_val - b)) - (a / V_val**2)
 
@@ -40,10 +39,6 @@ plt.show()
 
 #Det som kan observeres her som er ulikt fra plottet i oppgaveteksten er at her så er den avtagende hele veien. I oppgaveteksten øker den først til kritisk punkt før den blir avtagende.
 #Det vi også kan se er at trykket er høyere for alle verdier av temperaturen.
-=======
-
-
-
 
 
 
@@ -188,13 +183,13 @@ def newton_one_var(f, df, T_0, tol=10e-12):
     print(f"The root was found to be at {x[-1]} after {i+1} iterations")
     return x
 
-T_0 =10 
+T_0 =1
 T_arr = newton_one_var(ex_eq, d_ex_eq, T_0, 10e-6)
 r = T_arr[-1]
 print(T_arr)
 
 
-T_0 = 300 #Vet nå at løsningen er ca. 285. Sjekker hvor fortere metoden konverger hvis vi velger c_0 = 300
+T_0 = 3 #Vet nå at løsningen er ca. 285. Sjekker hvor fortere metoden konverger hvis vi velger c_0 = 300
 T_arr_300 = newton_one_var(ex_eq, d_ex_eq, T_0, 10e-6)
 print(r-2*c/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten
 
@@ -212,4 +207,3 @@ plt.ylabel("$p_i$")
 plt.show()
 
 #Ser at p_i konvergerer mot 2. Dette er q-verdien samsvarer med at Newtons metode konvergerer kvadratisk
->>>>>>> Stashed changes
