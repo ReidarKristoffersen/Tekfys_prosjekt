@@ -173,8 +173,8 @@ def newton_one_var(f, df, T_0, tol=10e-12):
     x = np.array([T_0])
     while(np.abs(f(x[-1]))>=tol):
         x_i = x[-1] - (f(x[-1])/df(x[-1]))
-        print(f"f: {f(x[-1])}")
-        print(f"df: {df(x[-1])}")
+        #print(f"f: {f(x[-1])}")
+        #print(f"df: {df(x[-1])}")
         x = np.append(x, x_i)
         i+=1
         if(i>max_it):
@@ -183,23 +183,23 @@ def newton_one_var(f, df, T_0, tol=10e-12):
     print(f"The root was found to be at {x[-1]} after {i+1} iterations")
     return x
 
-T_0 =1
+T_0 = 1
 T_arr = newton_one_var(ex_eq, d_ex_eq, T_0, 10e-6)
 r = T_arr[-1]
 print(T_arr)
 
 
-T_0 = 3 #Vet nå at løsningen er ca. 285. Sjekker hvor fortere metoden konverger hvis vi velger c_0 = 300
+T_0 = 3 # Må velge en hensiktsmessig verdi. Kan ikke være for høy, da metoden ikke vil konvergere. 
 T_arr_300 = newton_one_var(ex_eq, d_ex_eq, T_0, 10e-6)
-print(r-2*c/np.log(1+np.sqrt(2))) #Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten
+print(r-2*c/np.log(1+np.sqrt(2))) # Sjekker at løsningen stemmer med ligningen gitt i oppgaveteksten
 
 
 #1d)
 
-e_i = np.abs(T_arr-r) #definer array med feil for hver iterasjon
+e_i = np.abs(T_arr-r) # definer array med feil for hver iterasjon
 plt.plot(e_i)
 plt.show()
-p_i = np.log(e_i[2:]/e_i[1:-1])/np.log(e_i[1:-1]/e_i[0:-2]) #Tar ikke med første element ettersom vi her fikk en rar verdi i plottet?????
+p_i = np.log(e_i[2:]/e_i[1:-1])/np.log(e_i[1:-1]/e_i[0:-2]) # Tar ikke med første element ettersom vi her fikk en rar verdi i plottet?????
 plt.plot(p_i)
 plt.title("$p_i$, konvergerer mot q")
 plt.xlabel("i")
