@@ -44,11 +44,11 @@ T_c = 647.096         #[K]
 def modell1(T, a, b):
     return a*(abs(T-T_c))**(b)
     
-def modell2(T, a, b, c):
-    return a/np.log10(T) + b/T + c
+def modell2(T, a, b):
+    return a*np.e**(b/T)
 
-def modell3(T, a, b, c, d):
-    return a*T**3 + b*T**2 + c*T + d
+def modell3(T, a, b, c, d, e):
+    return a*T**4 + b*T**3 + c*T**2 + d*T + e
 
 
 plt.title("L")
@@ -63,9 +63,7 @@ plt.title("Vg")
 plt.plot(T2, Vg, label="Exp. Vg")  # 1/x**2
 a = optimize.curve_fit(modell2, T2, Vg)[0][0]
 b = optimize.curve_fit(modell2, T2, Vg)[0][1]
-c = optimize.curve_fit(modell2, T2, Vg)[0][2]
-#d = optimize.curve_fit(modell2, T2, Vg)[0][3]
-plt.plot(T2, modell2(T2, a, b, c), label="Tilnærming" )
+plt.plot(T2, modell2(T2, a, b), label="Tilnærming" )
 plt.legend()
 plt.show()
 
@@ -75,7 +73,8 @@ a = optimize.curve_fit(modell3, T3, Vv)[0][0]
 b = optimize.curve_fit(modell3, T3, Vv)[0][1]
 c = optimize.curve_fit(modell3, T3, Vv)[0][2]
 d = optimize.curve_fit(modell3, T3, Vv)[0][3]
-plt.plot(T3, modell3(T3, a, b, c, d), label="Tilnærming") 
+e = optimize.curve_fit(modell3, T3, Vv)[0][4]
+plt.plot(T3, modell3(T3, a, b, c, d, e), label="Tilnærming") 
 plt.legend()
 plt.show()
 
