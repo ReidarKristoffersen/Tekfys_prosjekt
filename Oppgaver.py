@@ -213,7 +213,7 @@ def func1():
     return R_sym*T_sym*(1 / (V_g_sym - b_sym) - 1 / (V_v_sym - b_sym)) - a_sym*(1 / V_g_sym**2 - 1 / V_v_sym**2)  # 11
 
 def func2():
-    return R_sym*T_sym*(sympy.log((V_g_sym - b_sym) / (V_v_sym - b_sym)) / (V_g_sym - V_v_sym) ) - a_sym*(1 / (V_g_sym*V_v_sym) + 1 / (V_g_sym**2)) # 12
+    return R_sym*T_sym*(sympy.log((V_g_sym - b_sym) / (V_v_sym - b_sym)) / (V_g_sym - V_v_sym) ) - a_sym*(1 / (V_g_sym*V_v_sym) - 1 / (V_g_sym**2)) - R_sym*T_sym/(V_g_sym-b_sym) # 12
 
 a_sym, b_sym, R_sym, T_sym, V_g_sym, V_v_sym = sympy.symbols('a b R T V_g V_v') 
 
@@ -226,9 +226,9 @@ df1_dv = sympy.diff(f1, V_v_sym)
 df2_dg = sympy.diff(f2, V_g_sym)
 df2_dv = sympy.diff(f2, V_v_sym)
 
-Jacobi_uneval = np.array([[df1_dg, df1_dv], [df2_dg, df2_dv]])
+Jacobi_uneval = sympy.Matrix([[df1_dg, df1_dv], [df2_dg, df2_dv]])
 
-
+print(Jacobi_uneval)
 def Jacobi(J, x0, y0,T):
     
     """
@@ -245,14 +245,13 @@ def Jacobi(J, x0, y0,T):
     Jacobi : Array
              Evaluated Jacobi determinant at (x0, y0)
     """
-    J = sympy.Matrix(J)
     return np.array(J.subs([(a_sym, a), (b_sym, b), (R_sym, R), (T_sym, T), (V_g_sym, x0), (V_v_sym, y0)]), dtype=np.float64)
 
 def f1(V_g, V_v, T):
     return R*T*(1 / (V_g - b) - 1 / (V_v - b)) - a*(1 / V_g**2 - 1 / V_v**2)  # 11
 
 def f2(V_g, V_v, T):
-    return R*T*(np.log((V_g - b) / (V_v - b)) / (V_g - V_v) ) - a*(1 / (V_g*V_v) + 1 / (V_g**2)) # 12
+    return R*T*(np.log((V_g - b) / (V_v - b)) / (V_g - V_v) ) - a*(1 / (V_g*V_v) - 1 / (V_g**2)) - R*T/(V_g-b) # 12
 
 def f_tot(V_g, V_v, T):
     return np.array([f1(V_g, V_v, T), f2(V_g, V_v, T)]).T
@@ -260,7 +259,12 @@ def f_tot(V_g, V_v, T):
 #J = sympy.Matrix([func1, func2]).jacobian([V_g, V_v])
 #print(J)
 
-def newton_two_var(f, Jacobi_uneval, V_array, T, tol = 10e-12):
+def Jacobi_numpy(V_g,V_v,T):
+    J = np.array([[-R*T/(V_g - b)**2 + 2*a/V_g**3, R*T/(V_v - b)**2 - 2*a/V_v**3], [R*T/(V_g - b)**2 + R*T/((V_g - V_v)*(V_g - b)) - R*T*np.log((V_g - b)/(V_v - b))/(V_g - V_v)**2 - a*(-1/(V_g**2*V_v) + 2/V_g**3), -R*T/((V_g - V_v)*(V_v - b)) + R*T*np.log((V_g - b)/(V_v - b))/(V_g - V_v)**2 + a/(V_g*V_v**2)]])
+    return J
+
+
+def newton_two_var(f, Jacobi_uneval, V_arr, T, tol = 10e-1):
     """
     
 
@@ -283,25 +287,34 @@ def newton_two_var(f, Jacobi_uneval, V_array, T, tol = 10e-12):
     """
     max_it = 100
     i = 0
-    while np.linalg.norm(f(V_array[0], V_array[1], T)) >= tol:
-        print(V_array)
-        J = Jacobi(Jacobi_uneval, V_array[0], V_array[1], T)
-        f_ans = f(V_array[0], V_array[1], T)
+    while np.linalg.norm(f(V_arr[0], V_arr[1], T)) >= tol:
+        #print(V_array)
+        J = Jacobi_numpy(V_arr[0], V_arr[1], T)
+        print("\n")
+        print(J)
+        print("\n")
+        f_ans = f(V_arr[0], V_arr[1], T)
+        print(f"V:{V_arr}")
+        print(f"f:{f_ans}")
         #print(J.shape, f_ans.T.shape)
+        
         #print(f_ans.reshape(2,1))
         #delta = np.linalg.solve(J, -f_ans.reshape(2,1))
         delta = np.linalg.solve(J, -f_ans) #ny
-        V_array += delta.reshape(2) #[V_g, V_v]
+        V_arr += delta #[V_g, V_v]
         
         i += 1
         if(i>max_it):
             break
             raise Exception("Maximum iterations reached")
-    return V_array
+    return V_arr
             
-V_array = np.array([12.6 * 10e-3, 35.7 * 10e-6])
-T = 273
-print(newton_two_var(f_tot, Jacobi_uneval, V_array, 273))
+V_array = np.array([12.6e+3, 35.7])
+
+
+print(newton_two_var(f_tot, Jacobi_uneval, V_array, 274 ))
         
         
-    
+print(V_array)
+
+print(f_tot(V_array[0],V_array[1], 274))
