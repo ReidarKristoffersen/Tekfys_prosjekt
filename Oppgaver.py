@@ -377,3 +377,24 @@ plt.xlabel("T [K]")
 plt.vlines(T_c,20,10**4, color="gray", label = "$T_c$")
 plt.legend()
 plt.show()
+
+#1f) SKJØNNER IKKE
+
+
+"""# Leser datafilen
+V_v_data = np.loadtxt("vol_of_liquid_water.txt")
+T_V_v = V_v_data[:, 0]+ 273.15                     # Temperaturer [K]
+V_v_exp = (V_v_data[:, 2])*(1.008*2+16)# Væskevolum [mL/g]
+print(V_v_exp)
+p_v_exp = vdW(T_V_v, V_v_exp)
+print(p_v_exp)
+plt.semilogy(T_V_v,p_v_exp)"""
+
+
+# Leser datafilen
+Gass_data = np.loadtxt("exp_data_gass_water.txt")
+T_g_exp = Gass_data[:, 1]+ 273.15                     # Temperaturer [K]
+p_g_exp = (Gass_data[:, 0])                           # trykk [bar]
+
+plt.semilogy(T_arr,vdW(T_arr,V_array.T[0]))
+plt.semilogy(T_g_exp,p_g_exp) 
