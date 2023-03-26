@@ -363,7 +363,7 @@ V_array = np.array([12.6e+3, 35.7])
 
 print(newton_two_var(f_tot, V_array, 274))
 
-T_arr = np.linspace(274,647,500)
+T_arr = np.linspace(274,647,747)
 V_of_T = np.zeros((len(T_arr),2))
 
 for i in range(len(T_arr)):
@@ -381,20 +381,57 @@ plt.show()
 #1f) SKJØNNER IKKE
 
 
-"""# Leser datafilen
-V_v_data = np.loadtxt("vol_of_liquid_water.txt")
-T_V_v = V_v_data[:, 0]+ 273.15                     # Temperaturer [K]
-V_v_exp = (V_v_data[:, 2])*(1.008*2+16)# Væskevolum [mL/g]
-print(V_v_exp)
-p_v_exp = vdW(T_V_v, V_v_exp)
-print(p_v_exp)
-plt.semilogy(T_V_v,p_v_exp)"""
-
 
 # Leser datafilen
-Gass_data = np.loadtxt("exp_data_gass_water.txt")
-T_g_exp = Gass_data[:, 1]+ 273.15                     # Temperaturer [K]
-p_g_exp = (Gass_data[:, 0])                           # trykk [bar]
+Vg_data = np.loadtxt("Vg_verdier.txt")
+T_exp = Vg_data[:, 0]                    # Temperaturer [K]
+p_g_exp = (Vg_data[:, 2])                  # Trykk [bar]
 
-plt.semilogy(T_arr,vdW(T_arr,V_array.T[0]))
-plt.semilogy(T_g_exp,p_g_exp) 
+#Trippelpinkt ved T = 273.16, kritisk ved T = 647.096 (All data mellom dette)
+p_an_g = vdW(T_arr, V_of_T.T[0])
+p_an_v = vdW(T_arr,V_of_T.T[1])
+
+plt.semilogy(T_arr, p_an_g, label = "Numerisk gasss")
+plt.semilogy(T_arr, p_an_v, label = "Numerisk væske")
+plt.semilogy(T_exp,p_g_exp, label = "Eksperimentell")
+plt.xlabel("T [K]")
+plt.ylabel("log of p [log(bar)]")
+plt.legend()
+plt.show()
+#SER AT AVVIKET TYDELIG MINKER NÅR TEMPERATUREN ØKER 
+
+
+#1g)
+
+rel_index = 602
+T_rel  = T_arr[rel_index]
+V_rel = V_of_T[rel_index]
+print(V_rel)
+
+rel_V_arr = np.linspace(V_rel[1]-3,V_rel[0]+100,1000)
+
+p_rel = vdW(T_rel, rel_V_arr)
+
+p_V_g = vdW(T_rel, V_rel[0])
+
+plt.plot(rel_V_arr, p_rel, label = "Damptrykk")
+plt.scatter(V_rel[1], p_V_g, color = "red", label = "$V_v$")
+plt.scatter(V_rel[0], p_V_g, color = "orange", label = "$V_g$")
+plt.hlines(p_V_g, V_rel[1], V_rel[0], color = "blue", linestyles="--", label = "Faseovergang")
+plt.title(f"Damptrykk ved T = {T_rel}K")
+plt.xlabel("T [K]")
+plt.ylabel("p [bar]")
+plt.legend()
+plt.show()
+
+#1e)
+
+p_V_v = vdW(T_c, V_of_T.T[1])
+p_V_g = vdW(T_c, V_of_T.T[0])
+
+
+#plt.plot(V_of_T.T[1][400:],p_V_v)
+#plt.plot(V_of_T.T[0][:100],p_V_g)
+plt.plot(V_of_T.T[1],p_V_v)
+plt.plot(V_of_T.T[0] ,p_V_g)
+
