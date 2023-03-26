@@ -19,22 +19,27 @@ T1 = L_data[:, 0] + 273.15               # Temperaturer [K]
 L = L_data[:, 2]                         # Heat of vaporization [J/mol]
 L = L * 10                               # Heat of vaporization [bar * mL / mol]
 
+
 file2 = "Vg_verdier.txt"
 
 # Leser datafilen
 Vg_data = np.loadtxt(file2)
-T2 = Vg_data[:, 0]                    # Temperaturer [K]
-Vg = (18.01528/Vg_data[:, 3])*1000   # Gassvolum [mL]
+T2 = Vg_data[:, 0]                       # Temperaturer [K]
+Vg = (18.01528/Vg_data[:, 3])*1000       # Gassvolum [mL]
+
 
 file3 = "Vv_verdier.txt"
 
 # Leser datafilen
 Vv_data = np.loadtxt(file3)
-T3 = Vv_data[:, 0]                    # Temperaturer [K]
-Vv = (18.01528/Vv_data[:, 3])*1000   # Væskevolum [mL]
+T3 = Vv_data[:, 0]                       # Temperaturer [K]
+Vv = (18.01528/Vv_data[:, 3])*1000       # Væskevolum [mL]
 
 # Har ulike temperaturverdier eksperimentelt. Hvordan slå disse sammen? 
 # Alle datasettene er IKKE evaluert ved de samme verdiene av T. 
+
+# Molar masse (H2O) = 18.01528
+# Omgjøring fra massetetthet til volum (antar 1 mol stoff)
 
 
 
@@ -52,24 +57,30 @@ def modell_Vv(T, a, b, c, d, e):
     return a*T**4 + b*T**3 + c*T**2 + d*T + e
 
 
-plt.title("L")
+plt.title("Latent varme, L")
 plt.plot(T1, L, label="Exp. L")
+plt.xlabel("Varme [bar*mL / mol")
+plt.ylabel("Volum [mL]")
 a_L = optimize.curve_fit(modell_L, T1, L)[0][0]
 b_L = optimize.curve_fit(modell_L, T1, L)[0][1]
 plt.plot(T1, modell_L(T1, a_L, b_L), label="Tilnærming") 
 plt.legend()
 plt.show()
 
-plt.title("Vg")
-plt.plot(T2, Vg, label="Exp. Vg")  # 1/x**2
+plt.title("Gassvolum, Vg")
+plt.plot(T2, Vg, label="Exp. Vg")
+plt.xlabel("Temperatur [K]")
+plt.ylabel("Volum [mL]")
 a_Vg = optimize.curve_fit(modell_Vg, T2, Vg)[0][0]
 b_Vg = optimize.curve_fit(modell_Vg, T2, Vg)[0][1]
 plt.plot(T2, modell_Vg(T2, a_Vg, b_Vg), label="Tilnærming" )
 plt.legend()
 plt.show()
 
-plt.title("Vv")
+plt.title("Væskevolum, Vv")
 plt.plot(T3, Vv, label="Exp. Vv")  
+plt.xlabel("Temperatur [K]")
+plt.ylabel("Volum [mL]")
 a_Vv = optimize.curve_fit(modell_Vv, T3, Vv)[0][0]
 b_Vv = optimize.curve_fit(modell_Vv, T3, Vv)[0][1]
 c_Vv = optimize.curve_fit(modell_Vv, T3, Vv)[0][2]
