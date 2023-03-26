@@ -5,13 +5,13 @@ import sympy
 
 # PARAMETERE
 
-R = 8.314             #[J / mol K]
 R = 8314.46261815324  #[L Pa/ mol K]
 R = R*1000            #[mL Pa/ mol K]
 R = R*10**(-5)        #[mL bar/ mol K]
 T_c = 647.096         #[K]
-p_c = 22.064 * 10e6   #[Pa] 
+p_c = 22.064 * 10**6  #[Pa] 
 p_c = p_c*10**(-5)    #[bar] 
+print(p_c)
 #n = 1                #[mol] 
 
 
@@ -51,7 +51,7 @@ def vdW(T,V):
         Trykk ved gitt temperatur og volum
 
     """
-    p= ((R * T) / (V - b)) - (a / V**2)
+    p = ((R * T) / (V - b)) - (a / V**2)
     return p
 vdW_tilst_likn = vdW(T_c, V_val)
 
@@ -403,7 +403,7 @@ plt.show()
 
 #1g)
 
-rel_index = 602
+rel_index = 202
 T_rel  = T_arr[rel_index]
 V_rel = V_of_T[rel_index]
 print(V_rel)
@@ -424,14 +424,20 @@ plt.ylabel("p [bar]")
 plt.legend()
 plt.show()
 
-#1e)
+#1h)
 
 p_V_v = vdW(T_c, V_of_T.T[1])
 p_V_g = vdW(T_c, V_of_T.T[0])
+print(p_V_v)
+print(p_V_g)
 
+idx = np.searchsorted(p_V_v, p_c, side = "right")
+smaller_than_p_c = p_V_v[:idx]
+print(smaller_than_p_c)
+V_plot = V_of_T.T[1][:idx]
 
 #plt.plot(V_of_T.T[1][400:],p_V_v)
 #plt.plot(V_of_T.T[0][:100],p_V_g)
-plt.plot(V_of_T.T[1],p_V_v)
-plt.plot(V_of_T.T[0] ,p_V_g)
+plt.plot(V_plot, smaller_than_p_c)
+#plt.plot(V_of_T.T[0] ,p_V_g)
 
