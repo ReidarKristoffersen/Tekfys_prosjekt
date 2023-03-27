@@ -363,7 +363,7 @@ V_array = np.array([12.6e+3, 35.7])
 
 print(newton_two_var(f_tot, V_array, 274))
 
-T_arr = np.linspace(274,647,747)
+T_arr = np.arange(274,647,1)
 V_of_T = np.zeros((len(T_arr),2))
 
 for i in range(len(T_arr)):
@@ -426,11 +426,21 @@ plt.show()
 
 #1h)
 
-p_V_v = vdW(T_c, V_of_T.T[1])
-p_V_g = vdW(T_c, V_of_T.T[0])
+p_V_v = vdW(T_arr, V_of_T.T[1])
+p_V_g = vdW(T_arr, V_of_T.T[0])
 print(p_V_v)
 print(p_V_g)
 
+plt.title("pV-fasediagram for H2O")
+plt.plot(V_of_T.T[1], p_V_v, label="væske")
+plt.plot(V_of_T.T[0], p_V_g, label="gass")
+plt.ylabel("p [bar]")
+plt.xlabel("V [mL]")
+plt.yscale('log')
+plt.xscale('log')
+plt.show()
+
+"""
 idx = np.searchsorted(p_V_v, p_c, side = "right")
 smaller_than_p_c = p_V_v[:idx]
 print(smaller_than_p_c)
@@ -438,6 +448,6 @@ V_plot = V_of_T.T[1][:idx]
 
 #plt.plot(V_of_T.T[1][400:],p_V_v)
 #plt.plot(V_of_T.T[0][:100],p_V_g)
-plt.plot(V_plot, smaller_than_p_c)
+#plt.plot(V_plot, smaller_than_p_c)
 #plt.plot(V_of_T.T[0] ,p_V_g)
-
+"""
