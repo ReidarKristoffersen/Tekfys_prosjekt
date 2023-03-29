@@ -48,6 +48,24 @@ Vv = (18.01528/Vv_data[:, 3])*1000       # Væskevolum [mL]
 T_c = 647.096         #[K]
 
 def modell_L(T, a, b):
+    """
+    
+
+    Parameters
+    ----------
+    T : TYPE
+        DESCRIPTION.
+    a : TYPE
+        DESCRIPTION.
+    b : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     return a*(abs(T-T_c))**(b)
     
 def modell_Vg(T, a, b):
@@ -92,23 +110,51 @@ plt.show()
 
 #2c)
 
-def clapeyrons(T):
+def clapeyrons_curve(T):
+    """
+    
+
+    Parameters
+    ----------
+    T : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    
+    # likning (13), bruker modellfunksjonen
+    
     L = modell_L(T, a_L, b_L)
     Vg = modell_Vg(T, a_Vg, b_Vg)
     Vv =  modell_Vv(T, a_Vv, b_Vv, c_Vv, d_Vv, e_Vv)
     return L / (T * (Vg - Vv))
 
 def simpson(T_start, T_slutt, n, f):
+    """
     
-    '''
-    Utfører Simpsons metode
-    a = startverdi
-    b = sluttverdi
-    n = antall intervaller
-    f = funksjonen
-    '''
-    
-    h = (T_slutt - T_start) / n                                 #lengden på intervallene i x-aksen
+
+    Parameters
+    ----------
+    T_start : TYPE
+        DESCRIPTION.
+    T_slutt : TYPE
+        DESCRIPTION.
+    n : TYPE
+        DESCRIPTION.
+    f : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    S : TYPE
+        DESCRIPTION.
+
+    """
+    h = (T_slutt - T_start) / n                 #lengden på intervallene i x-aksen
     S = 0                                       
     for i in range(1, int(n/2)):
         x = T_start + (2*i-1)*h
@@ -119,6 +165,12 @@ def simpson(T_start, T_slutt, n, f):
     S = h*S/3
     
     return S
+
+# for å sjekke at Simpson fungerer
+def f1(x):
+    return x**2
+print(simpson(1, 2, 8, f1))
+# eksakt svar er 7/3 = 2.333
 
 # def simpson_med_np(T_start, T_slutt, n, f):
 #     '''
@@ -137,21 +189,24 @@ def simpson(T_start, T_slutt, n, f):
 #     S = (f(a) + f(b) + np.sum(f_x1) + np.sum(f_x2)) * (h/3)
 #     return S
 
-T_0 = np.arange(274, 646, 1)
+
+T_0 = 274
 T_1 = np.arange(275, 647, 1)
 
 # Leser datafilen
 Vg_data = np.loadtxt("Vg_verdier.txt")
-T_exp = Vg_data[:, 0]                    # Temperaturer [K]
+T_exp = Vg_data[:, 0]                      # Temperaturer [K]
 p_g_exp = (Vg_data[:, 2])                  # Trykk [bar]
 
-p = simpson(T_0, T_1, 100, clapeyrons) #er denne i bar?
-plt.semilogy(((T_0+T_1)/2), p, label = "Simpson")
-plt.semilogy(T_exp,p_g_exp, label = "Eksperimentell")
+p_curve = simpson(T_0, T_1, 4, clapeyrons_curve)       #er denne i bar?
+plt.plot(T_1, p_curve, label = "Simpson - curve fit")
+plt.plot(T_exp,p_g_exp, label = "Eksperimentell")
 plt.xlabel("Temperatur [K]")
 plt.ylabel("Trykk [bar]")
 plt.legend()
 plt.show()
+
+#2d)
 
 def CubicSpline_interpol():
     """
@@ -185,7 +240,38 @@ plt.plot(T3, Vv_cubic(T3), label = "Vv cubic", color = "green")
 plt.plot(T3, modell_Vv(T3, a_Vv, b_Vv, c_Vv, d_Vv, e_Vv), label = "Vv curve fit", linestyle="--")
 plt.plot(T3, Vv, label="Exp. Vv", linestyle = ":", color = "red")  
 plt.legend()
-plt.show() 
+plt.show()    
 
-"hei"
+#2e)
+
+def clapeyrons_cubic(T):
+    return L_cubic(T) / (T * (Vg_cubic(T) - Vv_cubic(T)))
+
+p_cubic = simpson(T_0, T_1, 4, clapeyrons_cubic)       #er denne i bar?
+plt.plot(T_1, p_cubic, label = "Simpson - cubic")
+plt.plot(T_exp, p_g_exp, label = "Eksperimentell")
+plt.xlabel("Temperatur [K]")
+plt.ylabel("Trykk [bar]")
+plt.legend()
+plt.show()
+
+print(T_exp[0])
+print(p_g_exp[0])
+
+#2f)
+
+p_an_g = vdW(T_arr, V_of_T.T[0])                  #vdW
+plt.plot(T_arr, p_an_g, label = "van der Waals")
+plt.plot(T_1, p_curve, label = "Simpson - curve fit")
+plt.plot(T_1, p_cubic, label = "Simpson - cubic")
+
+#konstant L som vi må finne
+def analytisk(L, p_0, T_0, T): 
+    return p_0 * np.e((L / R) * ((1/T_0) - (1/T)))
+
+plt.plot(T, analytisk(L, p_0, T_0, T), label = "Analytisk")
+
+plt.plot(T_exp, p_g_exp, label = "Eksperimentell")
+plt.legend()
+plt.show()
     

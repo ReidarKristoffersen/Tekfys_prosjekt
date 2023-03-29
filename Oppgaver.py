@@ -391,9 +391,9 @@ p_g_exp = (Vg_data[:, 2])                  # Trykk [bar]
 p_an_g = vdW(T_arr, V_of_T.T[0])
 p_an_v = vdW(T_arr,V_of_T.T[1])
 
-plt.semilogy(T_arr, p_an_g, label = "Numerisk gasss")
-plt.semilogy(T_arr, p_an_v, label = "Numerisk væske")
-plt.semilogy(T_exp,p_g_exp, label = "Eksperimentell")
+plt.plot(T_arr, p_an_g, label = "Numerisk gasss")
+plt.plot(T_arr, p_an_v, label = "Numerisk væske")
+plt.plot(T_exp,p_g_exp, label = "Eksperimentell")
 plt.xlabel("T [K]")
 plt.ylabel("log of p [log(bar)]")
 plt.legend()
